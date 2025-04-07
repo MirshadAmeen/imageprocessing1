@@ -1,0 +1,38 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import cv2
+
+# Read image in grayscale
+image = cv2.imread(r'C:\Users\Sahyadri\Pictures\Saved Pictures\ip1.jpg', cv2.IMREAD_GRAYSCALE)
+
+if image is None:
+    raise FileNotFoundError("The image file 'ip1.jpg' was not found")
+
+# Convert to binary
+_, binary_image = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY)
+
+# Define structuring element
+struct_elem = np.ones((3, 3), np.uint8)
+
+# Apply erosion and dilation
+eroded_image = cv2.erode(binary_image, struct_elem)
+dilated_image = cv2.dilate(binary_image, struct_elem)
+
+# Calculate differences
+eroded_diff = cv2.absdiff(binary_image, eroded_image)
+dilated_diff = cv2.absdiff(dilated_image, binary_image)
+
+# Titles and image list
+titles = ['Original Binary', 'Eroded', 'Dilated', 'Erosion Diff', 'Dilation Diff']
+images = [binary_image, eroded_image, dilated_image, eroded_diff, dilated_diff]
+
+# Plotting
+plt.figure(figsize=(16, 6))
+for i, img in enumerate(images):
+    plt.subplot(2, 3, i + 1)
+    plt.imshow(img, cmap='gray')
+    plt.title(titles[i])
+    plt.axis('off')
+
+plt.tight_layout()
+plt.show()
